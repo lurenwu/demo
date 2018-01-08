@@ -9,6 +9,7 @@ setDiv()
 let dragElem
 let dragElemStyleBorder
 $frame.addEventListener('dragstart', function (event) {
+  console.log( event.target);
   dragElem = event.target
   dragElemStyleBorder = dragElem.style.border
   dragElem.style.border = '1px dashed #f23'

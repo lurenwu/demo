@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>1111</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    .wrap {
+      background: #666;
+      position: relative;
+    }
+
+    #canvas {
+      background: #666;
+    }
+
+    #down {
+      position: absolute;
+      left: 0;
+      top: 0
+    }
+
+    .comment {
+      text-align: left;
+    }
+  </style>
+  <script src="/socket.io/socket.io.js"></script>
+  <!-- <script src="./main.js"></script> -->
+</head>
+
+<body>
+
+  <div class="wrap">
+    <canvas id="canvas" width="800" height="800"></canvas>
+    <canvas id="down" width="800" height="800"></canvas>
+  </div>
+</body>
+<script>
+  var socket = io.connect('ws://192.168.31.153:3000');
+  let { width, height } = getComputedStyle(document.body)
+  let $canvas = document.getElementById('canvas')
+  let $down = document.getElementById('down')
+  let cxt = $canvas.getContext('2d')
+  // $canvas.width = parseInt(width, 10)
+  // $canvas.height = parseInt(height, 10)
+  let isBlack = false
+  let curX, curY = 0
+  function random(max = 2, min = 1) {
+    return Math.floor(Math.random() * max) + (min)
+  }
+
+  function Pointer() {
+    this.x = 0
+    this.y = 0
+  }
+
+  Pointer.prototype.targeInit = function () {
+    this.pointX = random($canvas.width)
+    //画四方形背景图
+    cxt.fillStyle = '#d3d3d3'
+    cxt.fillRect(25, 25, 750, 750)
+    cxt.beginPath()
+    //画线
+    cxt.strokeStyle = '#000'
+    cxt.lineWidth = 1
+    for (var i = 0; i <= 750; i += 50) {
+      cxt.moveTo(i + 25, 25);
+      cxt.lineTo(i + 25, 775);
+      cxt.stroke();
+      cxt.moveTo(25, i + 25);
+      cxt.lineTo(775, i + 25);
+      cxt.stroke();
+    }
+    // this.drawPoint()
+    // this.drawStar(cxt, 75, 125, 5, 15)
+    console.log(this.pointX)
+  }
+  Pointer.prototype.drawPoint = function () {
+    //画圆
+    cxt.beginPath()
+    cxt.fillStyle = '#000'
+    cxt.arc(75, 25, 10, 0, Math.PI * 2)
+    cxt.closePath()
+    cxt.fill()
+
+  }
+  Pointer.prototype.drawStar = function (cxt, x, y, r, R, isBlack) {
+    //画星星
+    cxt.beginPath();
+    for (var i = 0; i < 5; i++) {
+      cxt.lineTo(Math.cos((18 + i * 72) / 180 * Math.PI) * R + x,
+        -Math.sin((18 + i * 72) / 180 * Math.PI) * R + y)
+
+      cxt.lineTo(Math.cos((54 + i * 72) / 180 * Math.PI) * r + x,
+        -Math.sin((54 + i * 72) / 180 * Math.PI) * r + y)
+    }
+    cxt.closePath();
+    cxt.lineWidth = 3;
+    cxt.fillStyle = isBlack ? "#000" : "#fff";
+    cxt.strokeStyle = isBlack ? "#000" : "#fff";
+    cxt.lineJoin = "round";
+    cxt.fill();
+    cxt.stroke();
+  }
+
+  var point = new Pointer()
+  point.targeInit()
+  var Arr = []
+  var num = 0
+  $down.addEventListener('click', function (e) {
+    if (curX == e.offsetX - e.offsetX % 50 + 25 && curY == e.offsetY - e.offsetY % 50 + 25) {
+      return
+    }
+    isBlack = !isBlack
+    // console.log(e.offsetX - e.offsetX % 50 + 25, e.offsetY - e.offsetX % 50 + 25)
+
+    socket.emit('move', {
+      x: e.offsetX - e.offsetX % 50 + 25,
+      y: e.offsetY - e.offsetY % 50 + 25,
+      isBlack: isBlack
+    })
+
+    curX = e.offsetX - e.offsetX % 50 + 25
+    curY = e.offsetY - e.offsetY % 50 + 25
+    socket.on('move', function (xy) {
+    
+      point.drawStar(cxt, xy.x, xy.y, 5, 15, xy.isBlack)
+    })
+  }, false)
+
+</script>
+
+</html>

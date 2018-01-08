@@ -99,3 +99,11 @@ class _Lazyman {
   }
 
 }
+
+
+var d = require(`xxx.js`)
+
+console.log(d.c)
+
+var d = __webpack__chunk__id_1
+console.log(22)

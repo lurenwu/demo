@@ -17,7 +17,6 @@ var bodyWidth = _a.width;
 var bodyHeight = _a.height;
 var width = parseInt(bodyWidth, 10);
 var height = parseInt(bodyHeight, 10);
-//# sourceMappingURL=helper.js.map
 
 var tween = 5000;
 /**
@@ -158,4 +157,3 @@ canvas.addEventListener('mousemove', function (_a) {
 canvas.addEventListener('mouseleave', function () {
     app.pointers.splice(app.pointers.indexOf(mousePointer));
 });
-//# sourceMappingURL=stage.js.map

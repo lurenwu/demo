@@ -5,7 +5,6 @@ function render () {
 const $canvas = document.getElementById('canvas')
 // 获取屏幕宽高
 let {width, height} = getComputedStyle(document.body);
-
 width = parseInt(width, 10)
 height = parseInt(height, 10)
 
@@ -135,7 +134,7 @@ setInterval(() => {
   canvas.pointer.forEach(pointer => {
     pointer.targetInit()
   })
-}, 10000)
+}, 100000)
 
 }
 
